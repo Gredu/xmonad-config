@@ -5,12 +5,13 @@
 -- This is setup for dual 1920x1080 monitors, with the right monitor as primary
 Config {
     font = "xft:Fixed-8",
-    bgColor = "#000000",
+    bgColor = "#1c1c1c",
     fgColor = "#ffffff",
-    position = Static { xpos = 1920, ypos = 0, width = 1800, height = 16 },
+    position = Static { xpos = 1680, ypos = 0, width = 1675, height = 16 },
     lowerOnStart = True,
     commands = [
-        Run Weather "KPAO" ["-t","<tempF>F <skyCondition>","-L","64","-H","77","-n","#CEFFAC","-h","#FFB6B0","-l","#96CBFE"] 36000,
+        -- Run Weather "KPAO" ["-t","<tempC>C <skyCondition>","-L","64","-H","77","-n","#CEFFAC","-h","#FFB6B0","-l","#96CBFE"] 36000,
+        Run Weather "KPAO" ["-t","<tempC>C <skyCondition>","-L","10","-H","25","-n","#CEFFAC","-h","#FFB6B0","-l","#96CBFE"] 36000,
         Run MultiCpu ["-t","Cpu: <total0> <total1> <total2> <total3>","-L","30","-H","60","-h","#FFB6B0","-l","#CEFFAC","-n","#FFFFCC","-w","3"] 10,
         Run Memory ["-t","Mem: <usedratio>%","-H","8192","-L","4096","-h","#FFB6B0","-l","#CEFFAC","-n","#FFFFCC"] 10,
         Run Swap ["-t","Swap: <usedratio>%","-H","1024","-L","512","-h","#FFB6B0","-l","#CEFFAC","-n","#FFFFCC"] 10,

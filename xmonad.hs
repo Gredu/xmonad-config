@@ -25,14 +25,14 @@ import qualified Data.Map        as M
 -- The preferred terminal program, which is used in a binding below and by
 -- certain contrib modules.
 --
-myTerminal = "/usr/bin/gnome-terminal"
+myTerminal = "urxvt"
 
 
 ------------------------------------------------------------------------
 -- Workspaces
 -- The default number of workspaces (virtual screens) and their names.
 --
-myWorkspaces = ["1:term","2:web","3:code","4:vm","5:media"] ++ map show [6..9]
+myWorkspaces = ["1","2","3","4","5"] ++ map show [6..9]
 
 
 ------------------------------------------------------------------------
@@ -50,17 +50,16 @@ myWorkspaces = ["1:term","2:web","3:code","4:vm","5:media"] ++ map show [6..9]
 -- 'className' and 'resource' are used below.
 --
 myManageHook = composeAll
-    [ className =? "Chromium"       --> doShift "2:web"
-    , className =? "Google-chrome"  --> doShift "2:web"
-    , resource  =? "desktop_window" --> doIgnore
+    [ resource  =? "desktop_window" --> doIgnore
     , className =? "Galculator"     --> doFloat
+    , className =? "Vlc"            --> doFloat
     , className =? "Steam"          --> doFloat
     , className =? "Gimp"           --> doFloat
     , resource  =? "gpicview"       --> doFloat
+    , resource  =? "Skype"          --> doFloat
     , className =? "MPlayer"        --> doFloat
-    , className =? "VirtualBox"     --> doShift "4:vm"
-    , className =? "Xchat"          --> doShift "5:media"
     , className =? "stalonetray"    --> doIgnore
+    , className =? "synapse"    --> doIgnore
     , isFullscreen --> (doF W.focusDown <+> doFullFloat)]
 
 
@@ -76,35 +75,35 @@ myManageHook = composeAll
 --
 myLayout = avoidStruts (
     Tall 1 (3/100) (1/2) |||
-    Mirror (Tall 1 (3/100) (1/2)) |||
-    tabbed shrinkText tabConfig |||
-    Full |||
-    spiral (6/7)) |||
+    Mirror (Tall 1 (3/100) (1/2))) |||
     noBorders (fullscreenFull Full)
 
+-- myLayout = avoidStruts (
+--     Tall 1 (3/100) (1/2) |||
+--     Mirror (Tall 1 (3/100) (1/2))) |||
 
 ------------------------------------------------------------------------
 -- Colors and borders
 -- Currently based on the ir_black theme.
 --
-myNormalBorderColor  = "#7c7c7c"
-myFocusedBorderColor = "#ffb6b0"
+myNormalBorderColor  = "#222222"
+myFocusedBorderColor = "#EE9A00"
 
 -- Colors for text and backgrounds of each tab when in "Tabbed" layout.
 tabConfig = defaultTheme {
     activeBorderColor = "#7C7C7C",
-    activeTextColor = "#CEFFAC",
-    activeColor = "#000000",
+    activeTextColor = "#EE9A00",
+    activeColor = "#222222",
     inactiveBorderColor = "#7C7C7C",
-    inactiveTextColor = "#EEEEEE",
-    inactiveColor = "#000000"
+    inactiveTextColor = "#bbbbbb",
+    inactiveColor = "#222222"
 }
 
 -- Color of current window title in xmobar.
-xmobarTitleColor = "#FFB6B0"
+xmobarTitleColor = "#EE9A00"
 
 -- Color of current workspace in xmobar.
-xmobarCurrentWorkspaceColor = "#CEFFAC"
+xmobarCurrentWorkspaceColor = "#EE9A00"
 
 -- Width of the window border in pixels.
 myBorderWidth = 1
@@ -118,7 +117,7 @@ myBorderWidth = 1
 -- ("right alt"), which does not conflict with emacs keybindings. The
 -- "windows key" is usually mod4Mask.
 --
-myModMask = mod1Mask
+myModMask = mod4Mask
 
 myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   ----------------------------------------------------------------------
@@ -129,6 +128,10 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   [ ((modMask .|. shiftMask, xK_Return),
      spawn $ XMonad.terminal conf)
 
+  -- Put computer to hibernation.
+  , ((modMask, xK_End),
+     spawn "~/bin/suspend")
+
   -- Lock the screen using xscreensaver.
   , ((modMask .|. controlMask, xK_l),
      spawn "xscreensaver-command -lock")
@@ -136,7 +139,8 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   -- Launch dmenu via yeganesh.
   -- Use this to launch programs without a key binding.
   , ((modMask, xK_p),
-     spawn "dmenu-with-yeganesh")
+     -- spawn "dmenu-with-yeganesh")
+     spawn "dmenu_run")
 
   -- Take a screenshot in select mode.
   -- After pressing this key binding, click a window, or draw a rectangle with

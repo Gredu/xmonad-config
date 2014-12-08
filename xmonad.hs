@@ -5,6 +5,7 @@
 import System.IO
 import System.Exit
 import XMonad
+import XMonad.Actions.CycleWS
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
@@ -32,7 +33,7 @@ myTerminal = "urxvt"
 -- Workspaces
 -- The default number of workspaces (virtual screens) and their names.
 --
-myWorkspaces = ["1","2","3","4","5"] ++ map show [6..9]
+myWorkspaces = ["1:term","2:web","3:code","4:vm","5:media"] ++ map show [6..9]
 
 
 ------------------------------------------------------------------------
@@ -50,16 +51,17 @@ myWorkspaces = ["1","2","3","4","5"] ++ map show [6..9]
 -- 'className' and 'resource' are used below.
 --
 myManageHook = composeAll
-    [ resource  =? "desktop_window" --> doIgnore
+    [ className =? "Chromium"       --> doShift "2:web"
+    , className =? "Google-chrome"  --> doShift "2:web"
+    , resource  =? "desktop_window" --> doIgnore
     , className =? "Galculator"     --> doFloat
-    , className =? "Vlc"            --> doFloat
     , className =? "Steam"          --> doFloat
     , className =? "Gimp"           --> doFloat
     , resource  =? "gpicview"       --> doFloat
-    , resource  =? "Skype"          --> doFloat
     , className =? "MPlayer"        --> doFloat
+    , className =? "VirtualBox"     --> doShift "4:vm"
+    , className =? "Xchat"          --> doShift "5:media"
     , className =? "stalonetray"    --> doIgnore
-    , className =? "synapse"    --> doIgnore
     , isFullscreen --> (doF W.focusDown <+> doFullFloat)]
 
 
@@ -78,32 +80,29 @@ myLayout = avoidStruts (
     Mirror (Tall 1 (3/100) (1/2))) |||
     noBorders (fullscreenFull Full)
 
--- myLayout = avoidStruts (
---     Tall 1 (3/100) (1/2) |||
---     Mirror (Tall 1 (3/100) (1/2))) |||
 
 ------------------------------------------------------------------------
 -- Colors and borders
 -- Currently based on the ir_black theme.
 --
-myNormalBorderColor  = "#222222"
-myFocusedBorderColor = "#EE9A00"
+myNormalBorderColor  = "#7c7c7c"
+myFocusedBorderColor = "#ffb6b0"
 
 -- Colors for text and backgrounds of each tab when in "Tabbed" layout.
 tabConfig = defaultTheme {
     activeBorderColor = "#7C7C7C",
-    activeTextColor = "#EE9A00",
-    activeColor = "#222222",
+    activeTextColor = "#CEFFAC",
+    activeColor = "#000000",
     inactiveBorderColor = "#7C7C7C",
-    inactiveTextColor = "#bbbbbb",
-    inactiveColor = "#222222"
+    inactiveTextColor = "#EEEEEE",
+    inactiveColor = "#000000"
 }
 
 -- Color of current window title in xmobar.
-xmobarTitleColor = "#EE9A00"
+xmobarTitleColor = "#FFB6B0"
 
 -- Color of current workspace in xmobar.
-xmobarCurrentWorkspaceColor = "#EE9A00"
+xmobarCurrentWorkspaceColor = "#CEFFAC"
 
 -- Width of the window border in pixels.
 myBorderWidth = 1
@@ -128,19 +127,24 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   [ ((modMask .|. shiftMask, xK_Return),
      spawn $ XMonad.terminal conf)
 
-  -- Put computer to hibernation.
+  -- Lock the screen using xscreensaver.
   , ((modMask, xK_End),
-     spawn "~/bin/suspend")
+     spawn "systemctl suspend")
 
   -- Lock the screen using xscreensaver.
   , ((modMask .|. controlMask, xK_l),
      spawn "xscreensaver-command -lock")
 
-  -- Launch dmenu via yeganesh.
+  -- Launch gmrun.
   -- Use this to launch programs without a key binding.
   , ((modMask, xK_p),
      -- spawn "dmenu-with-yeganesh")
-     spawn "dmenu_run")
+     spawn "gmrun")
+     -- spawn "dmenu")
+     
+  -- Launch dmenu via yeganesh.
+  , ((modMask.|. shiftMask, xK_p),
+     spawn "dmenu-with-yeganesh")
 
   -- Take a screenshot in select mode.
   -- After pressing this key binding, click a window, or draw a rectangle with
@@ -156,7 +160,6 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   -- Fetch a single use password.
   , ((modMask .|. shiftMask, xK_o),
      spawn "fetchotp -x")
-
 
   -- Mute volume.
   , ((modMask .|. controlMask, xK_m),
@@ -184,7 +187,23 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
 
   -- Eject CD tray.
   , ((0, 0x1008FF2C),
-     spawn "eject -T")
+      spawn "eject -T")
+
+  -- CycleWS and toggling.
+  -- Toggle between screens.
+    , ((modMask, xK_space), swapNextScreen)
+
+    -- Move to next screen.
+    , ((modMask .|. shiftMask, xK_space), shiftNextScreen)
+
+    -- Focus next screen.
+    , ((modMask .|. controlMask, xK_space), nextScreen)
+
+    -- Move to next empty workspace
+    , ((modMask .|. mod1Mask, xK_space), shiftTo Next EmptyWS)
+
+  -- Fix some keypresses with some applications
+  -- , ((mod5Mask, xK_h), shiftTo Next EmptyWS)
 
   --------------------------------------------------------------------
   -- "Standard" xmonad key bindings
@@ -195,11 +214,11 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
      kill)
 
   -- Cycle through the available layout algorithms.
-  , ((modMask, xK_space),
+  , ((modMask, xK_o),
      sendMessage NextLayout)
 
   --  Reset the layouts on the current workspace to default.
-  , ((modMask .|. shiftMask, xK_space),
+  , ((modMask .|. shiftMask, xK_o),
      setLayout $ XMonad.layoutHook conf)
 
   -- Resize viewed windows to the correct size.
@@ -325,7 +344,12 @@ myMouseBindings (XConfig {XMonad.modMask = modMask}) = M.fromList $
 -- per-workspace layout choices.
 --
 -- By default, do nothing.
-myStartupHook = return ()
+myStartupHook :: X ()
+myStartupHook = do
+    spawn "setxkbmap -layout fi"
+    spawn "xmodmap ~/.xmodmap-swapper"
+    spawn "xset m 0 0"
+    spawn "xrandr --auto --output DVI-0 --mode 1680x1050 --left-of DVI-1 --output DVI-1 --primary"
 
 
 ------------------------------------------------------------------------
@@ -341,9 +365,8 @@ main = do
           , ppSep = "   "
       }
       , manageHook = manageDocks <+> myManageHook
-      , startupHook = setWMName "LG3D"
+      -- , startupHook = setWMName "LG3D"
   }
-
 
 ------------------------------------------------------------------------
 -- Combine it all together

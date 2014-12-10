@@ -135,16 +135,12 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   , ((modMask .|. controlMask, xK_l),
      spawn "xscreensaver-command -lock")
 
-  -- Launch gmrun.
+  -- Launch dmenu via yeganesh.
   -- Use this to launch programs without a key binding.
   , ((modMask, xK_p),
      -- spawn "dmenu-with-yeganesh")
-     spawn "gmrun")
-     -- spawn "dmenu")
-     
-  -- Launch dmenu via yeganesh.
-  , ((modMask.|. shiftMask, xK_p),
-     spawn "dmenu-with-yeganesh")
+     spawn "dmenu_run | yeganesh")
+     -- spawn "dmenu_path | yeganesh -- -nb '#000000' -nf '#FFFFFF' -sb '#7C7C7C' -sf '#CEFFAC'")
 
   -- Take a screenshot in select mode.
   -- After pressing this key binding, click a window, or draw a rectangle with
@@ -344,12 +340,7 @@ myMouseBindings (XConfig {XMonad.modMask = modMask}) = M.fromList $
 -- per-workspace layout choices.
 --
 -- By default, do nothing.
-myStartupHook :: X ()
-myStartupHook = do
-    spawn "setxkbmap -layout fi"
-    spawn "xmodmap ~/.xmodmap-swapper"
-    spawn "xset m 0 0"
-    spawn "xrandr --auto --output DVI-0 --mode 1680x1050 --left-of DVI-1 --output DVI-1 --primary"
+myStartupHook = return ()
 
 
 ------------------------------------------------------------------------
@@ -365,7 +356,7 @@ main = do
           , ppSep = "   "
       }
       , manageHook = manageDocks <+> myManageHook
-      -- , startupHook = setWMName "LG3D"
+      , startupHook = setWMName "LG3D"
   }
 
 ------------------------------------------------------------------------

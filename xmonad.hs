@@ -33,7 +33,8 @@ myTerminal = "urxvt"
 -- Workspaces
 -- The default number of workspaces (virtual screens) and their names.
 --
-myWorkspaces = ["1:term","2:web","3:code","4:vm","5:media"] ++ map show [6..9]
+-- myWorkspaces = ["1:term","2:web","3:code","4:vm","5:media"] ++ map show [6..8] ++ ["9:minimized"]
+myWorkspaces = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX:monitoring"]
 
 
 ------------------------------------------------------------------------
@@ -51,17 +52,13 @@ myWorkspaces = ["1:term","2:web","3:code","4:vm","5:media"] ++ map show [6..9]
 -- 'className' and 'resource' are used below.
 --
 myManageHook = composeAll
-    [ className =? "Chromium"       --> doShift "2:web"
-    , className =? "Google-chrome"  --> doShift "2:web"
-    , resource  =? "desktop_window" --> doIgnore
+    [ resource  =? "desktop_window" --> doIgnore
     , className =? "Galculator"     --> doFloat
     , className =? "Steam"          --> doFloat
     , className =? "Gimp"           --> doFloat
     , resource  =? "gpicview"       --> doFloat
     , className =? "MPlayer"        --> doFloat
-    , className =? "VirtualBox"     --> doShift "4:vm"
-    , className =? "Xchat"          --> doShift "5:media"
-    , className =? "stalonetray"    --> doIgnore
+    , className =? "mplayer"        --> doFloat
     , isFullscreen --> (doF W.focusDown <+> doFullFloat)]
 
 
@@ -86,7 +83,7 @@ myLayout = avoidStruts (
 -- Currently based on the ir_black theme.
 --
 myNormalBorderColor  = "#7c7c7c"
-myFocusedBorderColor = "#ffb6b0"
+myFocusedBorderColor = "#de935f"
 
 -- Colors for text and backgrounds of each tab when in "Tabbed" layout.
 tabConfig = defaultTheme {
@@ -99,13 +96,13 @@ tabConfig = defaultTheme {
 }
 
 -- Color of current window title in xmobar.
-xmobarTitleColor = "#FFB6B0"
+xmobarTitleColor = "#de935f"
 
 -- Color of current workspace in xmobar.
 xmobarCurrentWorkspaceColor = "#CEFFAC"
 
 -- Width of the window border in pixels.
-myBorderWidth = 1
+myBorderWidth = 2
 
 
 ------------------------------------------------------------------------
@@ -138,8 +135,8 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   -- Launch dmenu via yeganesh.
   -- Use this to launch programs without a key binding.
   , ((modMask, xK_p),
-     -- spawn "dmenu-with-yeganesh")
-     spawn "dmenu_run | yeganesh")
+     spawn "dmenu-with-yeganesh")
+     -- spawn "dmenu_run | yeganesh -nb")
      -- spawn "dmenu_path | yeganesh -- -nb '#000000' -nf '#FFFFFF' -sb '#7C7C7C' -sf '#CEFFAC'")
 
   -- Take a screenshot in select mode.
@@ -195,8 +192,9 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     -- Focus next screen.
     , ((modMask .|. controlMask, xK_space), nextScreen)
 
-    -- Move to next empty workspace
+    -- Move to 9:monitoring
     , ((modMask .|. mod1Mask, xK_space), shiftTo Next EmptyWS)
+    -- , ((modMask .|. mod1Mask, xK_space), doShift "9:monitoring")
 
   -- Fix some keypresses with some applications
   -- , ((mod5Mask, xK_h), shiftTo Next EmptyWS)

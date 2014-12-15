@@ -4,5 +4,5 @@
 # http://github.com/vicfryzel/xmonad-config
 
 
-# dmenu_path | yeganesh -- -fn '-*-terminus-*-r-normal-*-*-120-*-*-*-*-iso8859-*' \
-dmenu_path | yeganesh -- -nb '#000000' -nf '#FFFFFF' -sb '#7C7C7C' -sf '#CEFFAC'
+exec $(dmenu_path | /usr/bin/yeganesh -- -fn '-*-terminus-*-r-normal-*-*-120-*-*-*-*-iso8859-*' \
+    -nb '#1D1F21' -nf '#c5c8c6' -sb '#7C7C7C' -sf '#CEFFAC')

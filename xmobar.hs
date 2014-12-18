@@ -15,7 +15,7 @@ Config {
         Run Memory ["-t","mem: <usedratio>%","-H","8192","-L","4096","-h","#FFB6B0","-l","#CEFFAC","-n","#FFFFCC"] 10,
         Run Swap ["-t","swap: <usedratio>%","-H","1024","-L","512","-h","#FFB6B0","-l","#CEFFAC","-n","#FFFFCC"] 10,
         Run Network "enp2s0" ["-t","net: <rx>, <tx>","-H","200","-L","10","-h","#FFB6B0","-l","#CEFFAC","-n","#FFFFCC"] 10,
-        Run Date "%a %b %_d %l:%M" "date" 10,
+        Run Date "%a %b %_d %H:%M" "date" 10,
         Run DiskU [("/", "<used>/<size>"), ("/home/greatman", "<usedbar>")]
             ["-L", "20", "-H", "50", "-m", "1", "-p", "3"]
             20,

@@ -57,8 +57,8 @@ myManageHook = composeAll
     , className =? "Steam"          --> doFloat
     , className =? "Gimp"           --> doFloat
     , resource  =? "gpicview"       --> doFloat
-    , className =? "MPlayer"        --> doFloat
     , className =? "mplayer"        --> doFloat
+    , className =? "MPlayer"        --> doFloat
     , isFullscreen --> (doF W.focusDown <+> doFullFloat)]
 
 
